@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ Sơ Học Tập Ngữ Văn 12 - Lưu Việt Quang</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { 
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 100%); 
+            color: #1e293b; 
+            line-height: 1.6; 
+            padding: 20px; 
+            min-height: 100vh;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        
+        /* Phần hồ sơ cá nhân cách điệu màu sắc */
+        .profile-card { 
+            background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%); 
+            color: #ffffff;
+            border-left: 6px solid #f59e0b; 
+            padding: 25px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 20px rgba(13, 148, 136, 0.2); 
+            margin-bottom: 25px; 
+        }
+        .profile-card h1 { font-size: 26px; color: #ffffff; margin-bottom: 10px; font-weight: 700; letter-spacing: 0.5px; }
+        .profile-info { display: flex; flex-wrap: wrap; gap: 12px; font-size: 15px; }
+        .profile-info div { background: rgba(255, 255, 255, 0.2); padding: 6px 14px; border-radius: 6px; backdrop-filter: blur(5px); }
+        .profile-info strong { color: #fde047; }
+
+        /* Thanh Tab chuyển thẻ */
+        .tab-nav { display: flex; gap: 12px; margin-bottom: 25px; flex-wrap: wrap; }
+        .tab-btn { 
+            flex: 1; 
+            min-width: 160px; 
+            padding: 14px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            background: #ffffff; 
+            border: 2px solid #ccfbf1; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            color: #0f766e; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            transition: all 0.3s ease; 
+        }
+        .tab-btn:hover { background: #f0fdf4; border-color: #0d9488; }
+        .tab-btn.active { background: #0f766e; color: #ffffff; border-color: #0f766e; box-shadow: 0 6px 12px rgba(15, 118, 110, 0.3); }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Ô tìm kiếm */
+        .search-box { margin-bottom: 25px; }
+        .search-input { 
+            width: 100%; 
+            padding: 14px 20px; 
+            font-size: 16px; 
+            border: 2px solid #99f6e4; 
+            border-radius: 8px; 
+            outline: none; 
+            background: #ffffff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            transition: border-color 0.3s;
+        }
+        .search-input:focus { border-color: #0f766e; box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15); }
+
+        /* Lưới hiển thị các thẻ bài học */
+        .works-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .work-card { 
+            background: #ffffff; 
+            border: 1px solid #e2e8f0; 
+            border-top: 4px solid #0d9488;
+            border-radius: 10px; 
+            padding: 20px; 
+            cursor: pointer; 
+            transition: transform 0.2s, box-shadow 0.2s; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.03);
+        }
+        .work-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); border-color: #0d9488; }
+        .work-title { font-size: 19px; font-weight: bold; color: #0f172a; margin-bottom: 6px; }
+        .work-author { font-size: 14px; color: #64748b; margin-bottom: 12px; }
+        .work-tag { 
+            display: inline-block; 
+            font-size: 12px; 
+            background: #f0fdf4; 
+            color: #166534; 
+            border: 1px solid #bbf7d0;
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            font-weight: 600; 
+        }
+
+        /* Hộp thoại Modal chi tiết */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: #ffffff; width: 90%; max-width: 700px; max-height: 85vh; overflow-y: auto; border-radius: 12px; padding: 30px; position: relative; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .close-btn { position: absolute; top: 20px; right: 25px; font-size: 26px; font-weight: bold; color: #94a3b8; cursor: pointer; border: none; background: none; transition: color 0.2s; }
+        .close-btn:hover { color: #0f172a; }
+        .modal-body h2 { color: #0f766e; margin-bottom: 5px; font-size: 24px; }
+        .modal-body h4 { color: #64748b; font-weight: normal; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; font-size: 15px; }
+        .modal-section { margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid #0d9488; }
+        .modal-section h5 { color: #0f766e; font-size: 14px; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
+        .modal-section p { font-size: 15px; color: #334155; white-space: pre-line; }
+        .no-results { grid-column: 1 / -1; text-align: center; color: #64748b; padding: 40px; font-size: 16px; background: #ffffff; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hồ sơ học tập cá nhân -->
+        <header class="profile-card">
+            <h1>HỒ SƠ HỌC TẬP NGỮ VĂN 12</h1>
+            <div class="profile-info">
+                <div><strong>Họ và tên:</strong> Lưu Việt Quang</div>
+                <div><strong>Lớp:</strong> 12A2</div>
+                <div><strong>Trường:</strong> THPT Yên Lãng</div>
+                <div><strong>Giáo viên hướng dẫn:</strong> Võ Thị Mỹ Ngà</div>
+            </div>
+        </header>
+
+        <!-- Thanh Chuyển Thẻ (Tabs) -->
+        <div class="tab-nav">
+            <button class="tab-btn active" id="btnKnowledge" onclick="switchTab('knowledge')">📚 Kiến thức Ngữ Văn</button>
+            <button class="tab-btn" id="btnPractice" onclick="switchTab('practice')">✍️ Ôn luyện Ngữ Văn</button>
+            <button class="tab-btn" id="btnExam" onclick="switchTab('exam')">📝 Đề thi thử</button>
+        </div>
+
+        <!-- THẺ 1: KIẾN THỨC NGỮ VĂN -->
+        <div id="tab-knowledge" class="tab-content active">
+            <div class="search-box">
+                <input type="text" id="searchKnowledge" class="search-input" placeholder="🔍 Tìm kiếm tác phẩm kiến thức...">
+            </div>
+            <div class="works-grid" id="knowledgeContainer"></div>
+        </div>
+
+        <!-- THẺ 2: ÔN LUYỆN NGỮ VĂN -->
+        <div id="tab-practice" class="tab-content">
+            <div class="search-box">
+                <input type="text" id="searchPractice" class="search-input" placeholder="🔍 Tìm kiếm câu hỏi ôn luyện...">
+            </div>
+            <div class="works-grid" id="practiceContainer"></div>
+        </div>
+
+        <!-- THẺ 3: ĐỀ THI THỬ -->
+        <div id="tab-exam" class="tab-content">
+            <div class="search-box">
+                <input type="text" id="searchExam" class="search-input" placeholder="🔍 Tìm kiếm đề thi thử theo năm hoặc tên đề...">
+            </div>
+            <div class="works-grid" id="examContainer"></div>
+        </div>
+    </div>
+
+    <!-- Modal hiển thị chi tiết -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        const worksData = [
+            { id: 1, title: "Tuyên Ngôn Độc Lập", author: "Hồ Chí Minh", genre: "Văn chính luận", summary: "Văn bản lịch sử vô giá tuyên bố kết thúc chế độ thực dân và khẳng định độc lập cho dân tộc.", content: "1. Tác giả: Hồ Chí Minh (1890 - 1969).\n2. Hoàn cảnh: Đọc ngày 02/09/1945 tại Quảng trường Ba Đình.\n3. Giá trị: Tuyên bố độc lập, vạch trần tội ác thực dân Pháp.", questions: "1. Nêu ý nghĩa của việc trích dẫn bản Tuyên ngôn của Mỹ và Pháp ở phần đầu?\n2. Phân tích nghệ thuật lập luận sắc bén của Chủ tịch Hồ Chí Minh trong đoạn văn tố cáo tội ác thực dân Pháp.\n3. Thông điệp quan trọng nhất của bản Tuyên Ngôn đối với thế hệ trẻ hôm nay?" },
+            { id: 2, title: "Tây Tiến", author: "Quang Dũng", genre: "Thơ trữ tình", summary: "Bức tranh thiên nhiên Tây Bắc hùng vĩ và hình tượng người lính Tây Tiến hào hoa, bi hùng.", content: "1. Tác giả: Quang Dũng (1921 - 1988).\n2. Hoàn cảnh: Viết năm 1948 tại Phù Lưu Chanh.\n3. Nổi bật: Bức tranh thiên nhiên Tây Bắc và vẻ đẹp hào hùng của người lính.", questions: "1. Phân tích 4 câu thơ đầu tiên để thấy được bức tranh hành quân gian khổ và thiên nhiên Tây Bắc.\n2. Làm rõ vẻ đẹp lãng mạn và bi hùng của người lính Tây Tiến qua đoạn 3.\n3. Nhận xét về ngòi bút lãng mạn của nhà thơ Quang Dũng." },
+            { id: 3, title: "Việt Bắc", author: "Tố Hữu", genre: "Thơ trữ tình chính trị", summary: "Khúc ca tình nghĩa giữa người cán bộ kháng chiến và nhân dân Việt Bắc trong cuộc chia tay năm 1954.", content: "1. Tác giả: Tố Hữu (1920 - 2002).\n2. Hoàn cảnh: Tháng 10/1954, rời chiến khu Việt Bắc về Hà Nội.\n3. Nổi bật: Đậm đà bản sắc dân tộc, âm hưởng ca dao.", questions: "1. Phân tích đoạn đối đáp giữa người đi và kẻ ở trong 8 câu thơ đầu.\n2. Cảm nhận bức tranh tứ bình thiên nhiên và con người Việt Bắc.\n3. Làm nổi bật đạo lý 'Uống nước nhớ nguồn' qua tác phẩm." },
+            { id: 4, title: "Đất Nước", author: "Nguyễn Khoa Điềm", genre: "Thơ trữ tình - Trường ca", summary: "Cái nhìn toàn diện, mới mẻ về Đất Nước của Nhân dân qua văn hóa, lịch sử và địa lý.", content: "1. Tác giả: Nguyễn Khoa Điềm.\n2. Xuất xứ: Trích trường ca 'Mặt đường khát vọng' (1971).\n3. Tư tưởng: 'Đất Nước này là Đất Nước Của Nhân Dân'.", questions: "1. Nhà thơ đã cảm nhận Đất Nước từ những bình diện nào trong phần đầu đoạn trích?\n2. Phân tích tư tưởng cốt lõi 'Đất Nước của Nhân dân' được thể hiện qua các khía cạnh văn hóa, lịch sử.\n3. Nhận xét về sự kết hợp giữa chất trữ tình và chính luận trong bài thơ." },
+            { id: 5, title: "Sóng", author: "Xuân Quỳnh", genre: "Thơ trữ tình", summary: "Tình yêu lứa đôi nồng nàn, thủy chung, khao khát hạnh phúc đích thực.", content: "1. Tác giả: Xuân Quỳnh (1942 - 1988).\n2. Hoàn cảnh: Viết năm 1967 tại biển Diêm Điền.\n3. Nổi bật: Tình yêu chân thành, nữ tính và mãnh liệt.", questions: "1. Phân tích ý nghĩa biểu tượng của hình tượng 'sóng' và mối quan hệ tương đồng với 'em'.\n2. Cảm nhận về nỗi nhớ và khát vọng thủy chung trong tình yêu qua bài thơ.\n3. Thông điệp về sự vĩnh cửu của tình yêu mà Xuân Quỳnh gửi gắm." },
+            { id: 6, title: "Người Lái Đò Sông Đà", author: "Nguyễn Tuân", genre: "Tùy bút", summary: "Vẻ đẹp dữ dội, thơ mộng của Sông Đà và phẩm chất tài hoa, anh hùng của người lao động.", content: "1. Tác giả: Nguyễn Tuân (1910 - 1987).\n2. Xuất xứ: Tập tùy bút 'Sông Đà' (1960).\n3. Tư tưởng: Ca ngợi chất vàng mười của con người Tây Bắc.", questions: "1. Phân tích sự hung bạo của Sông Đà qua thạch trận trên sông.\n2. Cảm nhận vẻ đẹp trữ tình, nên thơ của dòng sông qua các góc nhìn hội họa.\n3. Làm nổi bật hình tượng ông lái đò - một nghệ sĩ trên sông nước." },
+            { id: 7, title: "Ai Đã Đặt Tên Cho Dòng Sông?", author: "Hoàng Phủ Ngọc Tường", genre: "Ký", summary: "Bức tranh toàn cảnh về dòng sông Hương thơ mộng gắn liền với lịch sử, văn hóa xứ Huế.", content: "1. Tác giả: Hoàng Phủ Ngọc Tường (1937 - 2023).\n2. Hoàn cảnh: Viết tại Huế năm 1981.\n3. Nổi bật: Văn phong hướng nội, tài hoa, giàu chất thơ.", questions: "1. Phân tích vẻ đẹp của sông Hương khi ở nơi thượng nguồn rừng già.\n2. Sông Hương mang những nét tính cách nào khi chảy về đến ngoại vi và lòng thành phố Huế?\n3. Đánh giá cái tôi uyên bác và tài hoa của tác giả qua đoạn bút ký." },
+            { id: 8, title: "Vợ Nhặt", author: "Kim Lân", genre: "Truyện ngắn", summary: "Bức tranh nạn đói 1945 và khát vọng sống, tình người đùm bọc, niềm tin vào tương lai.", content: "1. Tác giả: Kim Lân (1920 - 2007).\n2. Xuất xứ: Phát triển từ tiểu thuyết 'Xóm ngụ cư'.\n3. Tư tưởng: Trong cận kề cái chết, con người vẫn hướng về sự sống và tương lai.", questions: "1. Phân tích tình huống truyện 'nhặt vợ' độc đáo đầy ý nghĩa nhân văn.\n2. Diễn biến tâm trạng của nhân vật Tràng trước và sau khi có vợ.\n3. Ý nghĩa của bát bánh đúc và nồi cháo cám trong việc thể hiện tình mẫu tử, tình người." },
+            { id: 9, title: "Vợ Chồng A Phủ", author: "Tô Hoài", genre: "Truyện ngắn", summary: "Cuộc sống tủi nhục của đồng bào Tây Bắc và sức sống tiềm tàng vươn lên tự do.", content: "1. Tác giả: Tô Hoài (1920 - 2014).\n2. Xuất xứ: Trích tập 'Truyện Tây Bắc' (1953).\n3. Nhân vật: Mị và A Phủ tự giải phóng bản thân.", questions: "1. Phân tích quãng đời tăm tối của nhân vật Mị tại nhà thống lý Pá Tra.\n2. Sức sống tiềm tàng trỗi dậy của Mị trong đêm tình mùa xuân ở Hồng Ngài.\n3. Phân tích diễn biến hành động cởi trói cho A Phủ và tự cứu mình của Mị trong đêm đông." },
+            { id: 10, title: "Chiếc Thuyền Ngoài Xa", author: "Nguyễn Minh Châu", genre: "Truyện ngắn", summary: "Cái nhìn đa chiều về cuộc sống và nghệ thuật: Nghệ thuật phải gắn liền với thực tế.", content: "1. Tác giả: Nguyễn Minh Châu (1930 - 1989).\n2. Hoàn cảnh: Viết năm 1983.\n3. Bài học: Không nên nhìn nhận cuộc sống qua bề ngoài đơn giản.", questions: "1. Phân tích hai phát hiện đắt giá của nghệ sĩ Phùng ở vùng biển miền Trung.\n2. Ý nghĩa câu chuyện của người đàn bà hàng chài tại tòa án huyện.\n3. Thông điệp nghệ thuật và đời sống mà Nguyễn Minh Châu muốn truyền tải." },
+            { id: 11, title: "Hồn Trương Ba, Da Hàng Thịt", author: "Lưu Quang Vũ", genre: "Kịch hiện đại", summary: "Xung đột giữa tâm hồn thanh cao và thể xác dung tục, khẳng định triết lý sống là chính mình.", content: "1. Tác giả: Lưu Quang Vũ (1948 - 1988).\n2. Hoàn cảnh: Viết năm 1981, công chiếu 1984.\n3. Thông điệp: Sống chắp vá, lệch lạc là điều đau khổ.", questions: "1. Phân tích màn đối thoại đầy kịch tính giữa Hồn Trương Ba và Xác anh hàng thịt.\n2. Bi kịch của Trương Ba khi phải sống trong thân xác kẻ khác và bị tha hóa.\n3. Ý nghĩa quyết định trả lại thân xác và chấp nhận cái chết của nhân vật Trương Ba." },
+            { id: 12, title: "Đàn ghi-ta của Lor-ca", author: "Thanh Thảo", genre: "Thơ hiện đại", summary: "Tiếng đàn định mệnh và cái chết bi tráng của nhà thơ thiên tài Lor-ca, khát vọng tự do.", content: "1. Tác giả: Thanh Thảo.\n2. Ý nghĩa: Biểu tượng cho cái đẹp, nghệ thuật chân chính và sự bất tử của nghệ sĩ đấu tranh vì tự do.", questions: "1. Phân tích âm hưởng tiếng đàn qua các từ láy và hình ảnh mở đầu bài thơ.\n2. Cảm nhận về hình tượng Lor-ca đối diện với cái chết bi tráng." },
+            { id: 13, title: "Một người Hà Nội", author: "Nguyễn Khải", genre: "Truyện ngắn", summary: "Vẻ đẹp thanh lịch, cốt cách và bản lĩnh của người Hà Nội qua nhân vật bà cô.", content: "1. Tác giả: Nguyễn Khải.\n2. Nhân vật chính: Cô Hiền - hiện thân cho vẻ đẹp văn hóa gốc của người Hà Nội.", questions: "1. Phân tích vẻ đẹp tính cách và lối sống của nhân vật cô Hiền.\n2. Quan niệm về cách ứng xử, lối sống của người Hà Nội qua tác phẩm." },
+            { id: 14, title: "Bức tranh của em gái tôi", author: "Tạ Duy Anh", genre: "Truyện ngắn", summary: "Bài học về lòng nhân ái, sự vị tha và chiến thắng sự đố kỵ trong tâm hồn tuổi mới lớn.", content: "1. Tác giả: Tạ Duy Anh.\n2. Nội dung: Sự chuyển biến tâm lý của người anh trước tài năng của em gái.", questions: "1. Phân tích diễn biến tâm trạng của người anh trước bức tranh đạt giải.\n2. Ý nghĩa bài học rút ra từ thái độ bao dung của Kiều Phương." }
+        ];
+
+        const examData = [
+            { id: 101, title: "Đề Thi Thử Tốt Nghiệp THPT 2026 - Lần 1", year: "Năm 2026", source: "Sở GD&ĐT Hà Nội", content: "I. ĐỌC HIỂU (3.0 điểm): Đọc đoạn trích về khát vọng cống hiến của tuổi trẻ và trả lời các câu hỏi nhận biết, thông hiểu, vận dụng.\n\nII. LÀM VĂN (7.0 điểm):\n- Câu 1 (2.0 điểm): Viết đoạn văn nghị luận 200 chữ bàn về ý nghĩa của sự kiên trì trong cuộc sống.\n- Câu 2 (5.0 điểm): Phân tích bức tranh thiên nhiên và hình tượng người lính trong đoạn trích bài thơ 'Tây Tiến' của Quang Dũng." },
+            { id: 102, title: "Đề Thi Thử Tốt Nghiệp THPT 2025 - Chuẩn Bộ GD&ĐT", year: "Năm 2025", source: "Bộ Giáo Dục và Đào Tạo (Minh họa)", content: "I. ĐỌC HIỂU (3.0 điểm): Đọc văn bản nhật dụng/thơ ca và thực hiện 4 yêu cầu đọc hiểu.\n\nII. LÀM VĂN (7.0 điểm):\n- Câu 1 (2.0 điểm): Viết đoạn văn nghị luận xã hội về sức mạnh của lòng nhân ái.\n- Câu 2 (5.0 điểm): Cảm nhận về đoạn trích trong bài thơ 'Việt Bắc' của Tố Hữu, từ đó nhận xét cảm hứng lãng mạn của nhà thơ." },
+            { id: 103, title: "Đề Thi Thử THPT Quốc Gia 2024 - Khối Chuyên", year: "Năm 2024", source: "Trường THPT Chuyên Khoa học Tự nhiên", content: "I. ĐỌC HIỂU (3.0 điểm): Ngữ liệu đọc hiểu trích từ tác phẩm nghị luận xã hội.\n\nII. LÀM VĂN (7.0 điểm):\n- Câu 1 (2.0 điểm): Nghị luận về sự cần thiết phải lắng nghe người khác trong xã hội hiện đại.\n- Câu 2 (5.0 điểm): Phân tích tình huống truyện và tâm trạng nhân vật Tràng trong đoạn trích truyện ngắn 'Vợ nhặt' của Kim Lân." },
+            { id: 104, title: "Đề Thi Thử Tốt Nghiệp THPT 2023 - Cụm Trường", year: "Năm 2023", source: "Cụm trường THPT Nam Định", content: "I. ĐỌC HIỂU (3.0 điểm): Đọc ngữ liệu thơ ca trữ tình.\n\nII. LÀM VĂN (7.0 điểm):\n- Câu 1 (2.0 điểm): Viết đoạn văn bàn về thói vô cảm trong giới trẻ hiện nay.\n- Câu 2 (5.0 điểm): Phân tích hình tượng sông Hương qua đoạn trích trong tùy bút 'Ai đã đặt tên cho dòng sông?' của Hoàng Phủ Ngọc Tường." }
+        ];
+
+        const knowledgeContainer = document.getElementById('knowledgeContainer');
+        const practiceContainer = document.getElementById('practiceContainer');
+        const examContainer = document.getElementById('examContainer');
+        
+        const searchKnowledge = document.getElementById('searchKnowledge');
+        const searchPractice = document.getElementById('searchPractice');
+        const searchExam = document.getElementById('searchExam');
+        
+        const detailModal = document.getElementById('detailModal');
+        const modalBody = document.getElementById('modalBody');
+
+        function switchTab(tabName) {
+            document.getElementById('btnKnowledge').classList.remove('active');
+            document.getElementById('btnPractice').classList.remove('active');
+            document.getElementById('btnExam').classList.remove('active');
+            
+            document.getElementById('tab-knowledge').classList.remove('active');
+            document.getElementById('tab-practice').classList.remove('active');
+            document.getElementById('tab-exam').classList.remove('active');
+
+            if (tabName === 'knowledge') {
+                document.getElementById('btnKnowledge').classList.add('active');
+                document.getElementById('tab-knowledge').classList.add('active');
+                renderKnowledge(worksData);
+            } else if (tabName === 'practice') {
+                document.getElementById('btnPractice').classList.add('active');
+                document.getElementById('tab-practice').classList.add('active');
+                renderPractice(worksData);
+            } else if (tabName === 'exam') {
+                document.getElementById('btnExam').classList.add('active');
+                document.getElementById('tab-exam').classList.add('active');
+                renderExam(examData);
+            }
+        }
+
+        function renderKnowledge(data) {
+            knowledgeContainer.innerHTML = '';
+            if (data.length === 0) {
+                knowledgeContainer.innerHTML = '<div class="no-results">Không tìm thấy tác phẩm phù hợp!</div>';
+                return;
+            }
+            data.forEach(work => {
+                const card = document.createElement('div');
+                card.className = 'work-card';
+                card.onclick = () => openKnowledgeModal(work);
+                card.innerHTML = `<div class="work-title">${work.title}</div><div class="work-author">${work.author}</div><span class="work-tag">${work.genre}</span>`;
+                knowledgeContainer.appendChild(card);
+            });
+        }
+
+        function renderPractice(data) {
+            practiceContainer.innerHTML = '';
+            if (data.length === 0) {
+                practiceContainer.innerHTML = '<div class="no-results">Không tìm thấy câu hỏi ôn luyện phù hợp!</div>';
+                return;
+            }
+            data.forEach(work => {
+                const card = document.createElement('div');
+                card.className = 'work-card';
+                card.onclick = () => openPracticeModal(work);
+                card.innerHTML = `<div class="work-title">Ôn luyện: ${work.title}</div><div class="work-author">Tác giả: ${work.author}</div><span class="work-tag">Hệ thống câu hỏi</span>`;
+                practiceContainer.appendChild(card);
+            });
+        }
+
+        function renderExam(data) {
+            examContainer.innerHTML = '';
+            if (data.length === 0) {
+                examContainer.innerHTML = '<div class="no-results">Không tìm thấy đề thi thử phù hợp!</div>';
+                return;
+            }
+            data.forEach(exam => {
+                const card = document.createElement('div');
+                card.className = 'work-card';
+                card.onclick = () => openExamModal(exam);
+                card.innerHTML = `<div class="work-title">${exam.title}</div><div class="work-author">Đơn vị ra đề: ${exam.source}</div><span class="work-tag">${exam.year}</span>`;
+                examContainer.appendChild(card);
+            });
+        }
+
+        function openKnowledgeModal(work) {
+            modalBody.innerHTML = `<h2>${work.title}</h2><h4>Tác giả: ${work.author} | Thể loại: ${work.genre}</h4><div class="modal-section"><h5>Tóm tắt tác phẩm</h5><p>${work.summary}</p></div><div class="modal-section"><h5>Kiến thức trọng tâm</h5><p>${work.content}</p></div>`;
+            detailModal.style.display = 'flex';
+        }
+
+        function openPracticeModal(work) {
+            modalBody.innerHTML = `<h2>Ôn Luyện: ${work.title}</h2><h4>Tác giả: ${work.author}</h4><div class="modal-section"><h5>Bộ câu hỏi ôn tập trọng tâm</h5><p>${work.questions}</p></div>`;
+            detailModal.style.display = 'flex';
+        }
+
+        function openExamModal(exam) {
+            modalBody.innerHTML = `<h2>${exam.title}</h2><h4>Nguồn: ${exam.source} (${exam.year})</h4><div class="modal-section"><h5>Nội dung cấu trúc đề thi</h5><p>${exam.content}</p></div>`;
+            detailModal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            detailModal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target === detailModal) {
+                closeModal();
+            }
+        }
+
+        searchKnowledge.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const filtered = worksData.filter(w => w.title.toLowerCase().includes(query) || w.author.toLowerCase().includes(query));
+            renderKnowledge(filtered);
+        });
+
+        searchPractice.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const filtered = worksData.filter(w => w.title.toLowerCase().includes(query) || w.author.toLowerCase().includes(query));
+            renderPractice(filtered);
+        });
+
+        searchExam.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const filtered = examData.filter(eItem => eItem.title.toLowerCase().includes(query) || eItem.source.toLowerCase().includes(query) || eItem.year.toLowerCase().includes(query));
+            renderExam(filtered);
+        });
+
+        // Khởi chạy hiển thị dữ liệu ngay khi tải trang
+        renderKnowledge(worksData);
+        renderPractice(worksData);
+        renderExam(examData);
+    </script>
+</body>
+</html>
